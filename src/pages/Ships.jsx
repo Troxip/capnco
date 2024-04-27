@@ -14,7 +14,7 @@ export default function Ships() {
         {ships.map((ship, i) => (
           <Link
             key={ship.id}
-            to={`/${ship.user.id}`} // Assuming username is used in the route path
+            to={`/${ship.user.id}=${i}`} // Assuming username is used in the route path
             className="border-2 border-slate-400bg-slate-400 p-8 hover:border-red-300 border-solid rounded-xl w-full h-full font-bold text-3xl text-center text-white hover:scale-110 transition-all"
           >
             <div>
@@ -48,7 +48,7 @@ export async function loader() {
   ];
 
   const limit = 25;
-  const offsets = Array.from({ length: 7 }, (_, index) => index * limit); // Generate offsets from 0 to 16500 (660 * 25)
+  const offsets = Array.from({ length: 10 }, (_, index) => index * limit); // Generate offsets from 0 to 16500 (660 * 25)
 
   let allShips = [];
 

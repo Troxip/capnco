@@ -1,29 +1,30 @@
 import { FaLongArrowAltLeft } from "react-icons/fa";
 import { Link, json, useLoaderData } from "react-router-dom";
+import Timer from "../components/Timer";
 
 export default function ShipTimer() {
   const data = useLoaderData();
-  console.log(data);
 
   return (
     <>
       <div className="px-4">
-        <Link to=".." relative="path">
+        <Link to=".." relative="path" className="absolute">
           <div className="flex items-center gap-2 font-bold text-2xl text-white">
             <FaLongArrowAltLeft /> All Ships
           </div>
         </Link>
+        <Timer shipDetails={data} />
       </div>
     </>
   );
 }
 
 export async function loader({ req, params }) {
-  const id = params.shipId;
-  console.log(id);
+  const param = params.shipId;
+  const id = param.split("=");
 
   const response = await fetch(
-    `https://odyn-backend.fly.dev/games/capncouserprofiles/?user=${id}`
+    `https://odyn-backend.fly.dev/games/capncouserprofiles/?user=${id[0]}`
   );
   if (!response.ok) {
     throw json(
