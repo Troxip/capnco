@@ -1,9 +1,8 @@
 import { FaLongArrowAltLeft } from "react-icons/fa";
-import { Link, useParams } from "react-router-dom";
+import { Link, json, useLoaderData } from "react-router-dom";
 
 export default function ShipTimer() {
-  const { shipId } = useParams();
-  console.log(shipId);
+  const data = useLoaderData();
 
   return (
     <>
@@ -16,4 +15,25 @@ export default function ShipTimer() {
       </div>
     </>
   );
+}
+
+export async function loader({ req, params }) {
+  const id = params.shipId;
+
+  const response = await fetch(
+    "https://odyn-backend.fly.dev/games/capncouserprofiles/?limit=25&offset=0&ordering=-mblast_balance"
+  );
+  if (!response.ok) {
+    throw json(
+      { message: `Could not find ${id}'s ship` },
+      {
+        status: 500,
+      }
+    );
+  } else {
+    const { results } = await response.json();
+    const foundShip = results.find((ship) => ship.user.username === id);
+
+    return foundShip;
+  }
 }
