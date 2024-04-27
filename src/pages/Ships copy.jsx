@@ -45,32 +45,55 @@ export default function Ships() {
 
 async function loadShips() {
   const usernames = [
-    "37530",
-    "36897",
-    "45104",
-    "45894",
-    "46351",
-    "47499",
-    "47664",
-    "48137",
-    "48676",
-    "49032",
-    "49052",
-    "49606",
-    "50323",
-    "50378",
-    "50384",
+    "GR33DY",
+    "lucky_carrot",
+    "BAB3",
+    "MAG4",
+    "5HIP",
+    "6PAC",
+    "7UP",
+    "8BALL",
+    "K9",
+    "10PIN",
+    "HE11O",
+    "D12",
+    "THIR13EN",
+    "SONATA14",
+    "PEN15",
   ];
-  const promises = usernames.map(async (username) => {
-    const response = await fetch(
-      `https://odyn-backend.fly.dev/games/capncouserprofiles/?user=${username}`
+
+  const limit = 25;
+  const offsets = Array.from({ length: 10 }, (_, index) => index * limit); // Generate offsets from 0 to 16500 (660 * 25)
+
+  let allShips = [];
+
+  // Fetch data for each offset
+  await Promise.all(
+    offsets.map(async (offset) => {
+      const response = await fetch(
+        `https://odyn-backend.fly.dev/games/capncouserprofiles/?limit=${limit}&offset=${offset}&ordering=-mblast_balance`
+      );
+
+      if (response.ok) {
+        const resData = await response.json();
+        allShips.push(...resData.results);
+      }
+    })
+  );
+
+  // Filter ships by usernames
+  const filteredShips = usernames
+    .map((username) => allShips.find((ship) => ship.user.username === username))
+    .filter(Boolean);
+
+  if (filteredShips.length === 0) {
+    return json(
+      { message: "No ships found for the specified usernames" },
+      { status: 404 }
     );
-    const data = await response.json();
-    return data.results[0];
-  });
-  const results = await Promise.all(promises);
-  console.log(results);
-  return results;
+  }
+  console.log(filteredShips);
+  return filteredShips;
 }
 
 export function loader() {
