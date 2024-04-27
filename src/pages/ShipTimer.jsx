@@ -3,6 +3,7 @@ import { Link, json, useLoaderData } from "react-router-dom";
 
 export default function ShipTimer() {
   const data = useLoaderData();
+  console.log(data);
 
   return (
     <>
@@ -19,9 +20,10 @@ export default function ShipTimer() {
 
 export async function loader({ req, params }) {
   const id = params.shipId;
+  console.log(id);
 
   const response = await fetch(
-    "https://odyn-backend.fly.dev/games/capncouserprofiles/?limit=25&offset=0&ordering=-mblast_balance"
+    `https://odyn-backend.fly.dev/games/capncouserprofiles/?user=${id}`
   );
   if (!response.ok) {
     throw json(
@@ -32,8 +34,8 @@ export async function loader({ req, params }) {
     );
   } else {
     const { results } = await response.json();
-    const foundShip = results.find((ship) => ship.user.username === id);
+    const ship = results[0];
 
-    return foundShip;
+    return ship;
   }
 }
