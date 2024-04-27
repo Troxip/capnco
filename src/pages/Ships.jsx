@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { Await, Link, defer, json, useLoaderData } from "react-router-dom";
+import { Await, Link, defer, useLoaderData } from "react-router-dom";
 
 export default function Ships() {
   const { ships } = useLoaderData();
@@ -11,8 +11,11 @@ export default function Ships() {
   return (
     <Suspense
       fallback={
-        <h1 className="font-bold text-4xl text-center text-white">
-          Loading...
+        <h1 className="flex flex-col font-bold text-4xl text-center text-white">
+          Loading...{" "}
+          <span className="text-red-300 text-sm">
+            (Reload the page if you are stuck)
+          </span>
         </h1>
       }
     >
