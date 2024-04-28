@@ -20,7 +20,7 @@ export default function Ships() {
       }
     >
       <div className="flex flex-col justify-center items-center gap-8 p-8 text-white">
-        <h1 className="font-bold text-4xl">Ships List</h1>
+        <h1 className="font-bold text-4xl">Ship List</h1>
         <Await resolve={ships}>
           {(ships) => (
             <nav className="gap-8 grid grid-cols-5 grid-rows-3 bg-inherit">
