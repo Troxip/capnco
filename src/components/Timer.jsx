@@ -13,12 +13,50 @@ export default function Timer({ shipDetails }) {
       : { startedTime: 0, stoppedTime: 0, isTimerRunning: false };
   });
 
-  useEffect(() => {
-    const storedData = localStorage.getItem(localStorageKey);
-    if (storedData) {
-      setTimerData(JSON.parse(storedData));
+  // Function to format time
+  function formatTime(time) {
+    return time < 10 ? `0${time}` : time;
+  }
+
+  // Function to format timestamp to readable date format
+  function formatTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    const year = date.getFullYear();
+    const month = formatTime(date.getMonth() + 1);
+    const day = formatTime(date.getDate());
+    const hours = formatTime(date.getHours());
+    const minutes = formatTime(date.getMinutes());
+    const seconds = formatTime(date.getSeconds());
+    return `${month}/${day}/${year}, ${hours}:${minutes}:${seconds}`;
+  }
+
+  // Function to calculate elapsed time
+  function calculateElapsedTime() {
+    if (timerData.isTimerRunning) {
+      const currentTime = new Date().getTime();
+      const elapsedTime = Math.floor(
+        (currentTime - timerData.startedTime) / 1000
+      ); // Convert milliseconds to seconds
+      const hours = Math.floor(elapsedTime / 3600);
+      const minutes = Math.floor((elapsedTime % 3600) / 60);
+      const seconds = elapsedTime % 60;
+      return `${formatTime(hours)} hours, ${formatTime(
+        minutes
+      )} minutes, ${formatTime(seconds)} seconds`;
+    } else {
+      return "Timer is not running";
     }
-  }, [localStorageKey]);
+  }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimerData((prevData) => ({
+        ...prevData,
+      }));
+    }, 1000); // Update every second
+
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, []);
 
   function startTime() {
     if (timerData.isTimerRunning) {
@@ -37,7 +75,7 @@ export default function Timer({ shipDetails }) {
     } else {
       // Start Timer
       const currentDate = new Date();
-      const startedTime = currentDate.toUTCString();
+      const startedTime = currentDate.getTime(); // Store timestamp for accurate calculation
       setTimerData({ startedTime, stoppedTime: 0, isTimerRunning: true });
       localStorage.setItem(
         localStorageKey,
@@ -66,21 +104,21 @@ export default function Timer({ shipDetails }) {
       >
         {timerData.isTimerRunning ? "Stop Timer" : "Start Timer"}
       </button>
+
       <p className="text-green-600">________________________________________</p>
-      <p></p>
-      <p>Time</p>
+      <p>{calculateElapsedTime()}</p>
       <p className="text-green-600">________________________________________</p>
       <p>
         Started Time:{" "}
         <span className={!timerData.isTimerRunning && "text-yellow-300"}>
-          {timerData.startedTime}
+          {formatTimestamp(timerData.startedTime)}
         </span>
       </p>
       {!timerData.isTimerRunning && (
         <p>
           Stopped Time:{" "}
           <span className={!timerData.isTimerRunning && "text-yellow-300"}>
-            {timerData.stoppedTime}
+            {formatTimestamp(timerData.stoppedTime)}
           </span>
         </p>
       )}
