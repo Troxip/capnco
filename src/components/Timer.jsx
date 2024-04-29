@@ -32,11 +32,8 @@ export default function Timer({ shipDetails }) {
 
   // Function to calculate elapsed time
   function calculateElapsedTime() {
-    if (timerData.isTimerRunning) {
-      const currentTime = new Date().getTime();
-      const elapsedTime = Math.floor(
-        (currentTime - timerData.startedTime) / 1000
-      ); // Convert milliseconds to seconds
+    if (!timerData.isTimerRunning) {
+      const elapsedTime = timerData.elapsedTime;
       const hours = Math.floor(elapsedTime / 3600);
       const minutes = Math.floor((elapsedTime % 3600) / 60);
       const seconds = elapsedTime % 60;
@@ -44,15 +41,55 @@ export default function Timer({ shipDetails }) {
         minutes
       )} minutes, ${formatTime(seconds)} seconds`;
     } else {
-      return "Timer is not running";
+      const currentTime = new Date().getTime();
+      const elapsedTime = Math.floor(
+        (currentTime - timerData.startedTime) / 1000
+      );
+      const hours = Math.floor(elapsedTime / 3600);
+      const minutes = Math.floor((elapsedTime % 3600) / 60);
+      const seconds = elapsedTime % 60;
+      return `${formatTime(hours)} hours, ${formatTime(
+        minutes
+      )} minutes, ${formatTime(seconds)} seconds`;
     }
   }
 
   useEffect(() => {
+    const storedData = localStorage.getItem(localStorageKey);
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+      const currentTime = new Date().getTime();
+      const elapsedTime = Math.floor(
+        (currentTime - parsedData.startedTime) / 1000
+      );
+      setTimerData({
+        ...parsedData,
+        elapsedTime: parsedData.isTimerRunning
+          ? elapsedTime
+          : parsedData.elapsedTime,
+      });
+    } else {
+      setTimerData({
+        startedTime: 0,
+        stoppedTime: 0,
+        isTimerRunning: false,
+        elapsedTime: 0,
+      });
+    }
+
     const interval = setInterval(() => {
-      setTimerData((prevData) => ({
-        ...prevData,
-      }));
+      setTimerData((prevData) => {
+        const currentTime = new Date().getTime();
+        const elapsedTime = Math.floor(
+          (currentTime - prevData.startedTime) / 1000
+        );
+        return {
+          ...prevData,
+          elapsedTime: prevData.isTimerRunning
+            ? elapsedTime
+            : prevData.elapsedTime,
+        };
+      });
     }, 1000); // Update every second
 
     return () => clearInterval(interval); // Cleanup interval on component unmount
@@ -105,18 +142,25 @@ export default function Timer({ shipDetails }) {
         {timerData.isTimerRunning ? "Stop Timer" : "Start Timer"}
       </button>
 
-      <p className="text-green-600">________________________________________</p>
-      <p>{calculateElapsedTime()}</p>
+      <p
+        className={
+          !timerData.isTimerRunning
+            ? "text-green-400 mt-5 text-xl"
+            : "text-white mt-5 text-xl"
+        }
+      >
+        {calculateElapsedTime()}
+      </p>
       <p className="text-green-600">________________________________________</p>
       <p>
-        Started Time:{" "}
+        Started Time (UTC):{" "}
         <span className={!timerData.isTimerRunning && "text-yellow-300"}>
           {formatTimestamp(timerData.startedTime)}
         </span>
       </p>
       {!timerData.isTimerRunning && (
         <p>
-          Stopped Time:{" "}
+          Stopped Time (UTC):{" "}
           <span className={!timerData.isTimerRunning && "text-yellow-300"}>
             {formatTimestamp(timerData.stoppedTime)}
           </span>
