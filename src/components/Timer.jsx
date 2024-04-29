@@ -10,7 +10,12 @@ export default function Timer({ shipDetails }) {
     const storedData = localStorage.getItem(localStorageKey);
     return storedData
       ? JSON.parse(storedData)
-      : { startedTime: 0, stoppedTime: 0, isTimerRunning: false };
+      : {
+          startedTime: 0,
+          stoppedTime: 0,
+          isTimerRunning: false,
+          doubloonsEarned: 0,
+        };
   });
 
   // Function to format time
@@ -74,6 +79,7 @@ export default function Timer({ shipDetails }) {
         stoppedTime: 0,
         isTimerRunning: false,
         elapsedTime: 0,
+        doubloonsEarned: 0,
       });
     }
 
@@ -93,30 +99,51 @@ export default function Timer({ shipDetails }) {
     }, 1000); // Update every second
 
     return () => clearInterval(interval); // Cleanup interval on component unmount
-  }, []);
+  }, [localStorageKey]);
 
   function startTime() {
+    const currentDate = new Date();
+    const startedTime = currentDate.getTime(); // Store timestamp for accurate calculation
+    const currentDoubloonsBalance = shipDetails.doubloons_balance;
+
     if (timerData.isTimerRunning) {
       // Stop Timer
-      const currentDate = new Date();
       const stoppedTime = currentDate.toUTCString();
+      const elapsedDoubloons =
+        currentDoubloonsBalance - timerData.doubloonsBalance;
       setTimerData((prevData) => ({
         ...prevData,
         stoppedTime,
         isTimerRunning: false,
+        doubloonsEarned: prevData.doubloonsEarned + elapsedDoubloons,
       }));
       localStorage.setItem(
         localStorageKey,
-        JSON.stringify({ ...timerData, stoppedTime, isTimerRunning: false })
+        JSON.stringify({
+          ...timerData,
+          stoppedTime,
+          isTimerRunning: false,
+          doubloonsEarned: timerData.doubloonsEarned + elapsedDoubloons,
+        })
       );
     } else {
       // Start Timer
-      const currentDate = new Date();
-      const startedTime = currentDate.getTime(); // Store timestamp for accurate calculation
-      setTimerData({ startedTime, stoppedTime: 0, isTimerRunning: true });
+      setTimerData({
+        startedTime,
+        stoppedTime: 0,
+        isTimerRunning: true,
+        doubloonsBalance: currentDoubloonsBalance,
+        doubloonsEarned: currentDoubloonsBalance - timerData.doubloonsBalance, // Calculate doubloons earned
+      });
       localStorage.setItem(
         localStorageKey,
-        JSON.stringify({ startedTime, stoppedTime: 0, isTimerRunning: true })
+        JSON.stringify({
+          startedTime,
+          stoppedTime: 0,
+          isTimerRunning: true,
+          doubloonsBalance: currentDoubloonsBalance, // Save current doubloons balance
+          doubloonsEarned: currentDoubloonsBalance - timerData.doubloonsBalance, // Calculate doubloons earned
+        })
       );
     }
   }
@@ -167,6 +194,25 @@ export default function Timer({ shipDetails }) {
         </p>
       )}
       <p className="text-green-600">________________________________________</p>
+      <p>
+        Start Doubloons Balance:{" "}
+        <span className={!timerData.isTimerRunning && "text-yellow-300"}>
+          {timerData.doubloonsBalance?.toLocaleString() ||
+            shipDetails.doubloons_balance.toLocaleString()}
+        </span>
+      </p>
+      <p>
+        Real Time Doubloons:{" "}
+        <span className={!timerData.isTimerRunning && "text-yellow-300"}>
+          {shipDetails.doubloons_balance.toLocaleString()}
+        </span>
+      </p>
+      <p>
+        Doubloons Earned:{" "}
+        <span className={!timerData.isTimerRunning && "text-yellow-300"}>
+          {timerData.doubloonsEarned.toLocaleString()}
+        </span>
+      </p>
     </div>
   );
 }
