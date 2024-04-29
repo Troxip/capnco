@@ -22,7 +22,7 @@ export default function Header() {
   useEffect(() => {
     const counts = fetchedData.reduce((acc, ship) => {
       const multiplier = ship.pirate_tier_multiplier;
-      if (multiplier !== 1) {
+      if (multiplier === 1) {
         acc[multiplier] = (acc[multiplier] || 0) + 1;
       }
       return acc;
@@ -39,9 +39,9 @@ export default function Header() {
           loading ? "opacity-50 cursor-not-allowed" : ""
         }`}
       >
-        {loading ? "Loading..." : "Get Data"}
+        {loading ? "Loading..." : "Get Multipliers"}
       </button>
-      <div className="top-5 left-40 absolute text-white">
+      <div className="top-5 left-56 absolute text-white">
         {Object.entries(multiplierCounts).map(([multiplier, count]) => (
           <p key={multiplier}>{`${multiplier}x = ${count}`}</p>
         ))}

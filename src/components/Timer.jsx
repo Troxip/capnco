@@ -4,31 +4,46 @@ import { useParams } from "react-router-dom";
 export default function Timer({ shipDetails }) {
   const params = useParams();
   const shipNumber = +params.shipId.split("=")[1] + 1;
-  const localStorageKey = `startedTime_${params.shipId}`;
+  const localStorageKey = `ship_${params.shipId}`;
 
-  const [startedTime, setStartedTime] = useState(
-    localStorage.getItem(localStorageKey) || 0
-  );
+  const [timerData, setTimerData] = useState(() => {
+    const storedData = localStorage.getItem(localStorageKey);
+    return storedData
+      ? JSON.parse(storedData)
+      : { startedTime: 0, stoppedTime: 0, isTimerRunning: false };
+  });
 
   useEffect(() => {
-    const storedTime = localStorage.getItem(localStorageKey);
-    if (storedTime) {
-      setStartedTime(storedTime);
+    const storedData = localStorage.getItem(localStorageKey);
+    if (storedData) {
+      setTimerData(JSON.parse(storedData));
     }
   }, [localStorageKey]);
 
   function startTime() {
-    const currentDate = new Date();
-    const day = currentDate.getDate();
-    const month = currentDate.toLocaleString("default", { month: "short" });
-    const hours = currentDate.getHours().toString().padStart(2, "0");
-    const minutes = currentDate.getMinutes().toString().padStart(2, "0");
-    const seconds = currentDate.getSeconds().toString().padStart(2, "0");
-    const startedTime =
-      day + " " + month + ", " + hours + ":" + minutes + ":" + seconds;
-
-    setStartedTime(startedTime);
-    localStorage.setItem(localStorageKey, startedTime);
+    if (timerData.isTimerRunning) {
+      // Stop Timer
+      const currentDate = new Date();
+      const stoppedTime = currentDate.toUTCString();
+      setTimerData((prevData) => ({
+        ...prevData,
+        stoppedTime,
+        isTimerRunning: false,
+      }));
+      localStorage.setItem(
+        localStorageKey,
+        JSON.stringify({ ...timerData, stoppedTime, isTimerRunning: false })
+      );
+    } else {
+      // Start Timer
+      const currentDate = new Date();
+      const startedTime = currentDate.toUTCString();
+      setTimerData({ startedTime, stoppedTime: 0, isTimerRunning: true });
+      localStorage.setItem(
+        localStorageKey,
+        JSON.stringify({ startedTime, stoppedTime: 0, isTimerRunning: true })
+      );
+    }
   }
 
   return (
@@ -41,14 +56,35 @@ export default function Timer({ shipDetails }) {
           Multiplier: {shipDetails.pirate_tier_multiplier}x
         </p>
       </div>
-      <p>mBlast amount: {shipDetails.mblast_balance}</p>
       <button
         onClick={startTime}
-        className="border-[1px] border-gray-600 hover:border-[1px] bg-gray-600 px-4 py-2 hover:border-blue-500 hover:border-solid rounded-xl text-white"
+        className={
+          timerData.isTimerRunning
+            ? "bg-[#854343] font-medium border-[1px] border-gray-600 hover:border-[1px]  px-4 py-2 hover:border-green-400 hover:border-solid rounded-xl text-white transition-all"
+            : "border-[1px] font-medium border-gray-600 hover:border-[1px]  bg-[#1a1a1a] px-4 py-2 hover:border-blue-500 hover:border-solid rounded-xl text-white transition-all"
+        }
       >
-        Start Timer
+        {timerData.isTimerRunning ? "Stop Timer" : "Start Timer"}
       </button>
-      <p>Started Time: {startedTime}</p>
+      <p className="text-green-600">________________________________________</p>
+      <p></p>
+      <p>Time</p>
+      <p className="text-green-600">________________________________________</p>
+      <p>
+        Started Time:{" "}
+        <span className={!timerData.isTimerRunning && "text-yellow-300"}>
+          {timerData.startedTime}
+        </span>
+      </p>
+      {!timerData.isTimerRunning && (
+        <p>
+          Stopped Time:{" "}
+          <span className={!timerData.isTimerRunning && "text-yellow-300"}>
+            {timerData.stoppedTime}
+          </span>
+        </p>
+      )}
+      <p className="text-green-600">________________________________________</p>
     </div>
   );
 }
