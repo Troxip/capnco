@@ -133,7 +133,7 @@ export default function Timer({ shipDetails }) {
         stoppedTime: 0,
         isTimerRunning: true,
         doubloonsBalance: currentDoubloonsBalance,
-        doubloonsEarned: currentDoubloonsBalance - timerData.doubloonsBalance, // Calculate doubloons earned
+        doubloonsEarned: timerData.doubloonsEarned,
       });
       localStorage.setItem(
         localStorageKey,
@@ -142,7 +142,7 @@ export default function Timer({ shipDetails }) {
           stoppedTime: 0,
           isTimerRunning: true,
           doubloonsBalance: currentDoubloonsBalance, // Save current doubloons balance
-          doubloonsEarned: currentDoubloonsBalance - timerData.doubloonsBalance, // Calculate doubloons earned
+          doubloonsEarned: timerData.doubloonsEarned,
         })
       );
     }
