@@ -6,7 +6,6 @@ export default function Timer() {
   const shipNumber = +params.shipId.split("=")[1] + 1;
   const localStorageKey = `ship_${params.shipId}`;
   const data = useLoaderData();
-  console.log(data);
 
   const [initialDoubloonsBalance, setInitialDoubloonsBalance] = useState(0);
 
@@ -31,6 +30,7 @@ export default function Timer() {
         doubloonsEarned: 0,
         doubloonsBalance: data.doubloons_balance,
         realTimeDoubloons: data.doubloons_balance,
+        initialDoubloonsBalance: 0, // Set initial doubloons balance to 0 initially
       };
     }
   });
@@ -186,7 +186,12 @@ export default function Timer() {
       </h1>
       <div>
         <p className="text-[1.3rem]">
-          Multiplier: {data.staking_rewards_multiplier}x
+          Multiplier:{" "}
+          {
+            // +data.pirate_tier_multiplier +
+            +data.staking_rewards_multiplier + +data.nft_rewards_multiplier
+          }
+          x
         </p>
       </div>
       <button
@@ -228,20 +233,20 @@ export default function Timer() {
       <p>
         Start Doubloons Balance:{" "}
         <span className={!timerData.isTimerRunning && "text-yellow-300"}>
-          {initialDoubloonsBalance.toLocaleString()}
+          {timerData.initialDoubloonsBalance?.toLocaleString()}
         </span>
       </p>
       <p>
         Real Time Doubloons:{" "}
         <span className={!timerData.isTimerRunning && "text-yellow-300"}>
-          {timerData.realTimeDoubloons.toLocaleString()}
+          {timerData.realTimeDoubloons?.toLocaleString()}
         </span>
       </p>
       <p>
         Doubloons Earned:{" "}
         <span className={!timerData.isTimerRunning && "text-yellow-300"}>
           {(
-            timerData.realTimeDoubloons - initialDoubloonsBalance
+            timerData.realTimeDoubloons - timerData.initialDoubloonsBalance
           ).toLocaleString()}
         </span>
       </p>

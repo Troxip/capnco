@@ -55,6 +55,13 @@ export default function Ships() {
                     <p className="text-green-400 text-sm">
                       {ship.user.username}
                     </p>
+                    <p className="text-white text-xs">
+                      {`${
+                        // +ship.pirate_tier_multiplier +
+                        +ship.staking_rewards_multiplier +
+                        +ship.nft_rewards_multiplier
+                      }X`}
+                    </p>
                   </div>
                 </Link>
               ))}
@@ -102,7 +109,6 @@ async function loadShips() {
     return data.results[0];
   });
   const results = await Promise.all(promises);
-  console.log(results);
   return results;
 }
 
