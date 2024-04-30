@@ -1,10 +1,8 @@
 import { FaLongArrowAltLeft } from "react-icons/fa";
-import { Link, json, useLoaderData } from "react-router-dom";
+import { Link, json } from "react-router-dom";
 import Timer from "../components/Timer";
 
 export default function ShipTimer() {
-  const data = useLoaderData();
-
   return (
     <>
       <div className="px-4">
@@ -13,7 +11,7 @@ export default function ShipTimer() {
             <FaLongArrowAltLeft /> All Ships
           </div>
         </Link>
-        <Timer shipDetails={data} />
+        <Timer />
       </div>
     </>
   );
