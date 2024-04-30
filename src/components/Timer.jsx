@@ -6,6 +6,7 @@ export default function Timer() {
   const shipNumber = +params.shipId.split("=")[1] + 1;
   const localStorageKey = `ship_${params.shipId}`;
   const data = useLoaderData();
+  console.log(data);
 
   const [initialDoubloonsBalance, setInitialDoubloonsBalance] = useState(0);
 
@@ -89,7 +90,7 @@ export default function Timer() {
 
       // Calculate elapsed time
       const elapsedTime = Math.floor(
-        (currentTime - timerData.startedTime) / 1000
+        (currentTime - timerData.startedTime) / 1000 - timerData.elapsedTime
       );
 
       // Save stoppedTime, doubloonsEarned, elapsed time, and current doubloons_balance in localStorage
@@ -185,7 +186,7 @@ export default function Timer() {
       </h1>
       <div>
         <p className="text-[1.3rem]">
-          Multiplier: {data.pirate_tier_multiplier}x
+          Multiplier: {data.staking_rewards_multiplier}x
         </p>
       </div>
       <button

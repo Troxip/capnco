@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 export async function fetchData() {
   const limit = 25;
   const offsets = Array.from({ length: 650 }, (_, index) => index * limit); // Generate offsets from 0 to 2000
@@ -23,3 +25,12 @@ export async function fetchData() {
 
   return combinedData;
 }
+
+async function test() {
+  const res = await fetch(
+    "https://odyn-backend.fly.dev/games/capncouserprofiles/?user=37163&claimed=false"
+  );
+  const data = await res.json();
+  console.log(data);
+}
+test();
