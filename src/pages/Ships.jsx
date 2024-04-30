@@ -1,8 +1,28 @@
-import { Suspense } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { Await, Link, defer, useLoaderData } from "react-router-dom";
 
 export default function Ships() {
   const { ships } = useLoaderData();
+  const [loadingText, setLoadingText] = useState("Loading.");
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLoadingText((prevText) => {
+        switch (prevText) {
+          case "Loading...":
+            return "Loading.";
+          case "Loading.":
+            return "Loading..";
+          case "Loading..":
+            return "Loading...";
+          default:
+            return "Loading";
+        }
+      });
+    }, 300); // Change the interval duration as needed
+
+    return () => clearInterval(interval);
+  }, []);
 
   if (ships.isError) {
     return <p className="font-bold text-3xl text-white">{ships.message}</p>;
@@ -12,7 +32,7 @@ export default function Ships() {
     <Suspense
       fallback={
         <h1 className="flex flex-col font-bold text-4xl text-center text-white">
-          Loading...{" "}
+          <span className="loading-text">{loadingText}</span>{" "}
           <span className="text-red-300 text-sm">
             (Reload the page if you are stuck)
           </span>
