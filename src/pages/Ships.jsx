@@ -57,9 +57,14 @@ export default function Ships() {
                     </p>
                     <p className="text-white text-xs">
                       {`${
-                        // +ship.pirate_tier_multiplier +
-                        +ship.staking_rewards_multiplier +
-                        +ship.nft_rewards_multiplier
+                        ship.nft_rewards_multiplier > 0
+                          ? +ship.pirate_tier_multiplier +
+                            +ship.staking_rewards_multiplier +
+                            +ship.nft_rewards_multiplier -
+                            1
+                          : +ship.pirate_tier_multiplier +
+                            +ship.staking_rewards_multiplier +
+                            +ship.nft_rewards_multiplier
                       }X`}
                     </p>
                   </div>
@@ -76,30 +81,12 @@ export default function Ships() {
 async function loadShips() {
   const usernames = [
     "37530",
-    "36897",
-    "45104",
-    "45894",
-    "46351",
-    "47499",
-    "47664",
-    "48137",
-    "48676",
-    "49032",
-    "49052",
-    "49606",
-    "50323",
-    "50378",
-    "50384",
-    "51231",
-    "51247",
-    "51248",
-    "51252",
-    "51256",
-    "51260",
-    "51265",
-    "51269",
-    "51274",
-    "51278",
+    "51409",
+    "51412",
+    "51415",
+    "51619",
+    "51620",
+    "51683",
   ];
   const promises = usernames.map(async (username) => {
     const response = await fetch(

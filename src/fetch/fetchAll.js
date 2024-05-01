@@ -1,8 +1,6 @@
-import { useEffect } from "react";
-
 export async function fetchData() {
   const limit = 25;
-  const offsets = Array.from({ length: 650 }, (_, index) => index * limit); // Generate offsets from 0 to 2000
+  const offsets = Array.from({ length: 640 }, (_, index) => index * limit); // Generate offsets from 0 to 2000
   let combinedData = [];
 
   try {

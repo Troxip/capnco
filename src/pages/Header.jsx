@@ -20,9 +20,15 @@ export default function Header() {
   };
 
   useEffect(() => {
-    const counts = fetchedData.reduce((acc, ship) => {
-      const multiplier = ship.pirate_tier_multiplier;
-      if (multiplier === 1) {
+    const counts = fetchedData.reduce((acc, data) => {
+      const multiplier =
+        +data.pirate_tier_multiplier +
+        +data.staking_rewards_multiplier +
+        (data.nft_rewards_multiplier > 0
+          ? +data.nft_rewards_multiplier - 1
+          : +data.nft_rewards_multiplier);
+
+      if (multiplier >= 1 && multiplier <= 11) {
         acc[multiplier] = (acc[multiplier] || 0) + 1;
       }
       return acc;
