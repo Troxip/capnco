@@ -184,13 +184,13 @@ export default function Timer() {
 
   function formatTimestamp(timestamp) {
     const date = new Date(timestamp);
-    const year = date.getUTCFullYear();
-    const month = formatTime(date.getUTCMonth() + 1);
-    const day = formatTime(date.getUTCDate());
-    const hours = formatTime(date.getUTCHours());
-    const minutes = formatTime(date.getUTCMinutes());
-    const seconds = formatTime(date.getUTCSeconds());
-    return `${month}/${day}/${year}, ${hours}:${minutes}:${seconds} UTC`;
+    const year = date.getFullYear();
+    const month = formatTime(date.getMonth() + 1);
+    const day = formatTime(date.getDate());
+    const hours = formatTime(date.getHours());
+    const minutes = formatTime(date.getMinutes());
+    const seconds = formatTime(date.getSeconds());
+    return `${month}/${day}/${year}, ${hours}:${minutes}:${seconds}`;
   }
 
   function calculateElapsedTime() {
