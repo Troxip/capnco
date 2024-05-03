@@ -216,6 +216,14 @@ export default function Timer() {
     }
   }
 
+  // Function to calculate total earned money based on doubloons earned
+  function calculateTotalEarned() {
+    const doubloonsEarned =
+      timerData.realTimeDoubloons - timerData.initialDoubloonsBalance;
+    const totalEarned = doubloonsEarned * (7.75 / 1000000); // 7.75$ for every 1 million doubloons
+    return totalEarned.toFixed(2); // Fixed to 2 decimal places
+  }
+
   return (
     <div className="flex flex-col justify-center items-center gap-2 text-white">
       <h1 className="font-bold text-5xl">
@@ -311,6 +319,12 @@ export default function Timer() {
         </span>
       </p>
       <p className="text-green-600">________________________________________</p>
+      <p>
+        Total Earned:{" "}
+        <span className={!timerData.isTimerRunning && "text-yellow-300"}>
+          ${calculateTotalEarned()}
+        </span>
+      </p>
     </div>
   );
 }
