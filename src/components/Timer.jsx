@@ -276,11 +276,12 @@ export default function Timer() {
         <p className="text-[1.3rem]">
           Multiplier:{" "}
           {data &&
-            +data.pirate_tier_multiplier +
-              +data.staking_rewards_multiplier +
-              (data.nft_rewards_multiplier > 0
-                ? +data.nft_rewards_multiplier - 1
-                : +data.nft_rewards_multiplier)}
+            (+data.nft_rewards_multiplier > 1
+              ? +data.nft_rewards_multiplier
+              : 0) +
+              (+data.staking_rewards_multiplier > 1
+                ? +data.staking_rewards_multiplier
+                : 0)}
           x
         </p>
       </div>

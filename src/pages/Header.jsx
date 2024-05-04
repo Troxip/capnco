@@ -21,13 +21,30 @@ export default function Header() {
 
   useEffect(() => {
     const counts = fetchedData.reduce((acc, data) => {
-      const multiplier =
-        +data.pirate_tier_multiplier +
-        +data.staking_rewards_multiplier +
-        (data.nft_rewards_multiplier > 0
-          ? +data.nft_rewards_multiplier - 1
-          : +data.nft_rewards_multiplier);
+      // Calculate the total multiplier according to the specified rules
+      let multiplier =
+        (+data.nft_rewards_multiplier > 1 ? +data.nft_rewards_multiplier : 0) +
+        (+data.staking_rewards_multiplier > 1
+          ? +data.staking_rewards_multiplier
+          : 0);
 
+      // Adjust the multiplier if necessary
+      if (multiplier === 0) {
+        multiplier = 1;
+      } else if (multiplier === 2) {
+        multiplier = 2;
+      } else if (multiplier === 10) {
+        if (
+          +data.nft_rewards_multiplier === 5 &&
+          +data.staking_rewards_multiplier === 5
+        ) {
+          multiplier = 10; // Handle the special case for 1 5 5
+        } else {
+          multiplier = 5; // Adjust for other cases of 10x
+        }
+      }
+
+      // Update the counts accordingly
       if (multiplier >= 1 && multiplier <= 11) {
         acc[multiplier] = (acc[multiplier] || 0) + 1;
       }

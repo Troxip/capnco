@@ -57,14 +57,12 @@ export default function Ships() {
                     </p>
                     <p className="text-white text-xs">
                       {`${
-                        ship.nft_rewards_multiplier > 0
-                          ? +ship.pirate_tier_multiplier +
-                            +ship.staking_rewards_multiplier +
-                            +ship.nft_rewards_multiplier -
-                            1
-                          : +ship.pirate_tier_multiplier +
-                            +ship.staking_rewards_multiplier +
-                            +ship.nft_rewards_multiplier
+                        (+ship.nft_rewards_multiplier > 1
+                          ? +ship.nft_rewards_multiplier
+                          : 0) +
+                        (+ship.staking_rewards_multiplier > 1
+                          ? +ship.staking_rewards_multiplier
+                          : 0)
                       }X`}
                     </p>
                   </div>
