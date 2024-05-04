@@ -262,8 +262,8 @@ export default function Timer() {
     let totalEarned;
     if (mode === "Captain") {
       totalEarned = doubloonsEarned * (1 / 120000);
-      if (doubloonsEarned >= 3000000 && new Date().getUTCHours() < 2) {
-        totalEarned += 2.75;
+      if (doubloonsEarned >= 3000000 && new Date().getUTCHours() < 1) {
+        totalEarned += 2.3;
       }
     } else {
       // Crew mode
@@ -277,7 +277,7 @@ export default function Timer() {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center gap-2 text-white">
+    <div className="flex flex-col justify-center items-center gap-2 bg-inherit text-white">
       <h1 className="font-bold text-5xl">
         Ship {shipNumber} | {data && data.user.username}
       </h1>
