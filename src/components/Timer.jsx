@@ -243,8 +243,17 @@ export default function Timer() {
   }
 
   function toggleMode() {
-    setMode(mode === "Captain" ? "Crew" : "Captain");
+    const newMode = mode === "Captain" ? "Crew" : "Captain";
+    setMode(newMode);
+    localStorage.setItem("mode", newMode); // Save mode in localStorage
   }
+
+  useEffect(() => {
+    const storedMode = localStorage.getItem("mode");
+    if (storedMode) {
+      setMode(storedMode);
+    }
+  }, []);
 
   // Function to calculate total earned money based on doubloons earned
   function calculateTotalEarned() {
