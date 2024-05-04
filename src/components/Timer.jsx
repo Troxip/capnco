@@ -6,6 +6,7 @@ export default function Timer() {
   const shipNumber = +params.shipId?.split("=")[1] + 1;
   const localStorageKey = `ship_${params.shipId}`;
   const [data, setData] = useState(null);
+  const [mode, setMode] = useState("Captain"); // Default mode is Captain
 
   useEffect(() => {
     async function fetchData() {
@@ -106,44 +107,7 @@ export default function Timer() {
     const currentDate = new Date();
     const currentTime = currentDate.getTime(); // Store timestamp for accurate calculation
 
-    if (timerData.isTimerRunning) {
-      // Stop Timer
-      const stoppedTime = currentDate.toUTCString();
-      const elapsedDoubloons = data
-        ? data.doubloons_balance - timerData.doubloonsBalance
-        : 0;
-      const elapsedmBlast = data
-        ? data.mblast_balance - timerData.mBlastBalance
-        : 0;
-
-      // Calculate elapsed time
-      const elapsedTime = Math.floor(
-        (currentTime - timerData.startedTime) / 1000 - timerData.elapsedTime
-      );
-
-      // Save stoppedTime, doubloonsEarned, elapsed time, and current doubloons_balance in localStorage
-      localStorage.setItem(
-        localStorageKey,
-        JSON.stringify({
-          ...timerData,
-          stoppedTime,
-          isTimerRunning: false,
-          doubloonsEarned: timerData.doubloonsEarned + elapsedDoubloons,
-          mBlastEarned: timerData.mBlastEarned + elapsedmBlast,
-          elapsedTime: timerData.elapsedTime + elapsedTime, // Update elapsed time
-        })
-      );
-
-      setTimerData((prevData) => ({
-        ...prevData,
-        stoppedTime,
-        isTimerRunning: false,
-        doubloonsEarned: prevData.doubloonsEarned + elapsedDoubloons,
-        mBlastEarned: prevData.mBlastEarned + elapsedmBlast,
-        elapsedTime: prevData.elapsedTime + elapsedTime, // Update elapsed time
-      }));
-    } else {
-      // Start Timer
+    const startTimer = () => {
       const realTimeDoubloons = data ? data.doubloons_balance : 0; // Get the current real-time doubloons
       const realTimemBlast = data ? data.mblast_balance : 0; // Get the current real-time mBlast
       setTimerData({
@@ -175,12 +139,65 @@ export default function Timer() {
           realTimemBlast,
         })
       );
-    }
+    };
+
+    const handleStart = () => {
+      if (timerData.isTimerRunning) {
+        // Stop Timer
+        const stoppedTime = currentDate.toUTCString();
+        const elapsedDoubloons = data
+          ? data.doubloons_balance - timerData.doubloonsBalance
+          : 0;
+        const elapsedmBlast = data
+          ? data.mblast_balance - timerData.mBlastBalance
+          : 0;
+
+        // Calculate elapsed time
+        const elapsedTime = Math.floor(
+          (currentTime - timerData.startedTime) / 1000 - timerData.elapsedTime
+        );
+
+        // Save stoppedTime, doubloonsEarned, elapsed time, and current doubloons_balance in localStorage
+        localStorage.setItem(
+          localStorageKey,
+          JSON.stringify({
+            ...timerData,
+            stoppedTime,
+            isTimerRunning: false,
+            doubloonsEarned: timerData.doubloonsEarned + elapsedDoubloons,
+            mBlastEarned: timerData.mBlastEarned + elapsedmBlast,
+            elapsedTime: timerData.elapsedTime + elapsedTime, // Update elapsed time
+          })
+        );
+
+        setTimerData((prevData) => ({
+          ...prevData,
+          stoppedTime,
+          isTimerRunning: false,
+          doubloonsEarned: prevData.doubloonsEarned + elapsedDoubloons,
+          mBlastEarned: prevData.mBlastEarned + elapsedmBlast,
+          elapsedTime: prevData.elapsedTime + elapsedTime, // Update elapsed time
+        }));
+      } else {
+        // Start Timer
+        const confirmMessage = `Start as a ${
+          mode === "Captain" ? "Captain" : "Crew"
+        }?`;
+        if (window.confirm(confirmMessage)) {
+          startTimer();
+        }
+      }
+    };
+
+    handleStart();
   }
 
   function formatTime(time) {
     return time < 10 ? `0${time}` : time;
   }
+
+  const fetttchedorno =
+    timerData.realTimeDoubloons - timerData.initialDoubloonsBalance;
 
   function formatTimestamp(timestamp) {
     const date = new Date(timestamp);
@@ -216,12 +233,38 @@ export default function Timer() {
     }
   }
 
+  function calculateElapsedTimeInSeconds() {
+    if (!timerData.isTimerRunning) {
+      return timerData.elapsedTime;
+    } else {
+      const currentTime = new Date().getTime();
+      return Math.floor((currentTime - timerData.startedTime) / 1000);
+    }
+  }
+
+  function toggleMode() {
+    setMode(mode === "Captain" ? "Crew" : "Captain");
+  }
+
   // Function to calculate total earned money based on doubloons earned
   function calculateTotalEarned() {
     const doubloonsEarned =
       timerData.realTimeDoubloons - timerData.initialDoubloonsBalance;
-    const totalEarned = doubloonsEarned * (7.75 / 1000000); // 7.75$ for every 1 million doubloons
-    return totalEarned.toFixed(2); // Fixed to 2 decimal places
+    let totalEarned;
+    if (mode === "Captain") {
+      totalEarned = doubloonsEarned * (1 / 120000);
+      if (doubloonsEarned >= 3000000 && new Date().getUTCHours() < 2) {
+        totalEarned += 2.75;
+      }
+    } else {
+      // Crew mode
+      if (shipNumber <= 3) {
+        totalEarned = doubloonsEarned * (1 / 11363);
+      } else {
+        totalEarned = doubloonsEarned * (1 / 12500);
+      }
+    }
+    return totalEarned.toFixed(2);
   }
 
   return (
@@ -242,6 +285,19 @@ export default function Timer() {
         </p>
       </div>
       <button
+        disabled={timerData.isTimerRunning}
+        onClick={toggleMode}
+        className={`top-80 left-36 text-3xl h-24 w-36 absolute px-4 py-2 rounded-md font-bold text-black ${
+          mode === "Crew" ? "bg-slate-500" : "bg-yellow-300"
+        }`}
+      >
+        {mode === "Captain" ? "Captain" : "Crew"}
+      </button>
+      <button
+        disabled={
+          timerData.isTimerRunning &&
+          !(fetttchedorno || calculateElapsedTimeInSeconds() < 60)
+        }
         onClick={startTime}
         className={
           timerData.isTimerRunning
@@ -249,7 +305,12 @@ export default function Timer() {
             : "border-[1px] font-medium border-gray-600 hover:border-[1px]  bg-[#1a1a1a] px-4 py-2 hover:border-blue-500 hover:border-solid rounded-xl text-white transition-all"
         }
       >
-        {timerData.isTimerRunning ? "Stop Timer" : "Start Timer"}
+        {timerData.isTimerRunning &&
+        !(fetttchedorno || calculateElapsedTimeInSeconds() < 60)
+          ? "Loading..."
+          : timerData.isTimerRunning
+          ? "Stop Timer"
+          : "Start Timer"}
       </button>
 
       <p
