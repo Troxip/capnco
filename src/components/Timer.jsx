@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 export default function Timer() {
   const params = useParams();
-  const shipNumber = +params.shipId?.split("=")[1] + 1;
+  const shipNumber = +params.shipId?.split("=")[1];
   const localStorageKey = `ship_${params.shipId}`;
   const [data, setData] = useState(null);
   const [mode, setMode] = useState("Captain"); // Default mode is Captain
@@ -270,7 +270,7 @@ export default function Timer() {
       if (shipNumber <= 3) {
         totalEarned = doubloonsEarned * (1 / 11363);
       } else {
-        totalEarned = doubloonsEarned * (1 / 12500);
+        totalEarned = doubloonsEarned * (1 / 11363);
       }
     }
     return totalEarned.toFixed(2);
@@ -279,7 +279,8 @@ export default function Timer() {
   return (
     <div className="flex flex-col justify-center items-center gap-2 bg-inherit text-white">
       <h1 className="font-bold text-5xl">
-        Ship {shipNumber} | {data && data.user.username}
+        Ship {shipNumber === 0 ? "King" : shipNumber} |{" "}
+        {data && data.user.username}
       </h1>
       <div>
         <p className="text-[1.3rem]">

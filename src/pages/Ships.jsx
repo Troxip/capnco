@@ -51,7 +51,7 @@ export default function Ships() {
                   className="border-2 border-slate-400bg-slate-400 p-8 hover:border-red-300 border-solid rounded-xl w-full h-full font-bold text-3xl text-center text-white hover:scale-110 transition-all"
                 >
                   <div>
-                    {`Ship ${i + 1}`}{" "}
+                    {i === 0 ? `King Ship` : `Ship ${i}`}{" "}
                     <p className="text-green-400 text-sm">
                       {ship.user.username}
                     </p>
