@@ -88,6 +88,16 @@ async function loadShips() {
     "52697",
     "52962",
     "52998",
+    "49032",
+    "49052",
+    "49606",
+    "50323",
+    "50378",
+    "51231",
+    "51247",
+    "51248",
+    "51252",
+    "20QUESTIONS",
   ];
   const promises = usernames.map(async (username) => {
     const response = await fetch(
