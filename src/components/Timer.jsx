@@ -7,6 +7,17 @@ export default function Timer() {
   const localStorageKey = `ship_${params.shipId}`;
   const [data, setData] = useState(null);
   const [mode, setMode] = useState("Captain"); // Default mode is Captain
+  const reset = data?.updated_at;
+  const mmr = data?.captain_mmr;
+  const date = new Date(reset);
+  const formattedTime =
+    "May " +
+    date.getUTCDate() +
+    " " +
+    date.getUTCHours() +
+    ":" +
+    (date.getUTCMinutes() < 10 ? "0" : "") +
+    date.getUTCMinutes();
 
   useEffect(() => {
     async function fetchData() {
@@ -278,6 +289,7 @@ export default function Timer() {
 
   return (
     <div className="flex flex-col justify-center items-center gap-2 bg-inherit text-white">
+      <div>Updated: {formattedTime}</div>
       <h1 className="font-bold text-5xl">
         Ship {shipNumber === 0 ? "King" : shipNumber} |{" "}
         {data && data.user.username}
@@ -294,6 +306,7 @@ export default function Timer() {
                 : 0)}
           x
         </p>
+        <p className="text-[1rem] text-center">MMR: {mmr}</p>
       </div>
       <button
         disabled={timerData.isTimerRunning}
